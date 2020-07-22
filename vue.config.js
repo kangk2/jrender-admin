@@ -9,6 +9,31 @@ function resolve(dir) {
 const name = defaultSettings.title || 'vue Admin Template' // page title
 const port = 9528 // dev port
 const isDev = process.env.NODE_ENV === 'development'
+const enableMock = process.env.VUE_APP_ENABLE_MOCK === 'true'
+
+const devServer = {
+  port: port,
+  hot: true,
+  open: 'Google Chrome',
+  overlay: {
+    warnings: false,
+    errors: true
+  },
+  proxy: {
+    [process.env.VUE_APP_BASE_API]: {
+      target: process.env.VUE_APP_PROXY_TARGET,
+      changeOrigin: true,
+      pathRewrite: {
+        ['^' + process.env.VUE_APP_BASE_API]: ''
+      },
+      logLevel: 'debug'
+    }
+  }
+}
+
+if (enableMock) {
+  devServer.after = require('./mock/mock-server.js')
+}
 
 // All configuration item explanations can be find in //cli.vuejs.org/config/
 module.exports = {
@@ -17,26 +42,7 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: isDev,
   productionSourceMap: isDev,
-  devServer: {
-    port: port,
-    open: true,
-    overlay: {
-      warnings: false,
-      errors: true
-    },
-    proxy: {
-      // change xxx-api/login => mock/login
-      // detail: //cli.vuejs.org/config/#devserver-proxy
-      [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:${port}/mock`,
-        changeOrigin: true,
-        pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
-        }
-      }
-    },
-    after: require('./mock/mock-server.js')
-  },
+  devServer,
   configureWebpack: {
     name: name,
     resolve: {
@@ -75,7 +81,8 @@ module.exports = {
         '//unpkg.com/vuex@3.5.1/dist/vuex.js',
         '//unpkg.com/js-cookie@2.2.1/src/js.cookie.js',
         '//unpkg.com/nprogress@0.2.0/nprogress.js',
-        '//unpkg.com/axios@0.18.1/dist/axios.js'
+        '//unpkg.com/axios@0.18.1/dist/axios.js',
+        'http://qupinapptest.oss-cn-beijing.aliyuncs.com/others/jrender/jrender.umd.js'
       ]
     }
     config.plugin('html')

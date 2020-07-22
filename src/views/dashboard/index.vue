@@ -1,17 +1,29 @@
-<script type="text/jsx">
+<template>
+  <div>
+    <j-render :json-schema-api="jsonApi" :components="comps" @loadRemoteJsonSchema="jrenderLoad" />
+  </div>
+</template>
+<script>
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
+  data() {
+    // const jsonApi = this.$route.path + '/page_info'
+    return {
+      jsonApi: '/form/page_info',
+      comps: []
+    }
+  },
   computed: {
     ...mapGetters([
       'name'
     ])
   },
-  render() {
-    return <div class='dashboard-container'>
-      <div class='dashboard-text'>name: {this.name}</div>
-    </div>
+  methods: {
+    jrenderLoad(page_api, page_json) {
+      this.jsonSchema = JSON.stringify(page_json, null, 2)
+    }
   }
 }
 </script>

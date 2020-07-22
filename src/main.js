@@ -12,10 +12,13 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+import http from './utils/request'
 
 Vue.use(ElementUI, { locale: ElementUI.lang.zhCN })
 
 Vue.config.productionTip = false
+
+Vue.prototype.$http = http
 
 new Vue({
   el: '#app',
